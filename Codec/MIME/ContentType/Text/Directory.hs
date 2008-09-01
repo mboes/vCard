@@ -1,6 +1,7 @@
 module Codec.MIME.ContentType.Text.Directory
     ( Directory, Property(..), Type(..), Parameter(..), Value(..)
-    , nakedType, parseDirectory ) where
+    , Rfc2425Types
+    , nakedType, (@@), parseDirectory ) where
 
 import Data.Time
 import Data.Bits (shiftL)
@@ -30,6 +31,9 @@ instance Eq Type where
 nakedType :: String -> Type
 nakedType name = Type { type_group = Nothing, type_name = name }
 
+(@@) :: Property u -> String -> Bool
+p @@ name = prop_type p == nakedType name
+
 instance Ord Type where
     compare x y = let f = map toLower . type_name
                   in compare (f x) (f y)
@@ -49,9 +53,15 @@ data Value u = URI URI
              | Integer Integer
              | Boolean Bool
              | Float Float
-             | List (Value u)
+-- Decode a list of values as a list of properties, since rfc2425
+-- considers them to be semantically equivalent.
+--           | List (Value u)
              | IANAValue u -- an IANA defined type not part of rfc2425
                deriving (Eq, Show)
+
+-- | Instantiate Value with this phantom type to indicate that
+-- property types should be none other than those defined in rfc2425.
+data Rfc2425Types
 
 -- | Break the input into logical lines, unfolding lines that span
 -- multiple physical lines.
@@ -68,26 +78,30 @@ unfoldLines s =
          _ -> error "Malformed input: no LF after a CR."
 
 parseDirectory
-    :: ((Type, [Parameter]) -> String -> Value u)
+    :: ((Type, [Parameter]) -> String -> [Value u])
     -- ^ Given a Property Type and a list of parameters, parse a string
     -- representation into a Value.
     -> String
     -> Directory u
-parseDirectory pprop = map (parseProperty pprop) . unfoldLines
+parseDirectory valparse = concatMap (parseProperty valparse) . unfoldLines
 
+-- | Parse a string representation into a property. Note that the
+-- return type her is actually a list of properties, because we
+-- desugar properties whose values are lists into a list of
+-- properties, one for each element of the value list.
 parseProperty
-    :: ((Type, [Parameter]) -> String -> Value u)
+    :: ((Type, [Parameter]) -> String -> [Value u])
     -- ^ Given a Property Type and a list of parameters, parse a string
-    -- representation into a Value.
+    -- representation into a (list of) Value.
     -> String
-    -> Property u
-parseProperty pprop line =
+    -> [Property u]
+parseProperty valparse line =
     let (beg, rest) = break (\x -> x == ';' || x == ':') line
         name = parseType beg
         (params, ':':value) = parseParameterListS rest
-    in Prop { prop_type = name
-            , prop_parameters = params
-            , prop_value = pprop (name, params) value }
+    in map (\val -> Prop { prop_type = name
+                         , prop_parameters = params
+                         , prop_value = val }) (valparse (name, params) value)
 
 parseParameterListS :: String -> ([Parameter], String)
 parseParameterListS (':':xs) = ([], ':':xs)
