@@ -1,7 +1,8 @@
 module Codec.MIME.ContentType.Text.Directory
     ( Directory, Property(..), Type(..), Parameter(..), Value(..)
     , Rfc2425Types
-    , nakedType, (@@), parseDirectory ) where
+    , nakedType, (@@), parseDirectory
+    , parseTextList ) where
 
 import Data.Time
 import Data.Bits (shiftL)
@@ -86,7 +87,7 @@ parseDirectory
 parseDirectory valparse = concatMap (parseProperty valparse) . unfoldLines
 
 -- | Parse a string representation into a property. Note that the
--- return type her is actually a list of properties, because we
+-- return type here is actually a list of properties, because we
 -- desugar properties whose values are lists into a list of
 -- properties, one for each element of the value list.
 parseProperty
@@ -116,8 +117,7 @@ parseParameterS :: String -> (Parameter, String)
 parseParameterS xs =
     case break (== '=') xs of
       (name, _:'"':rest) | not (null name) ->
-          let (qp, _:rest') = break (== '"') rest
-              val = decode [qp]
+          let (val, _:rest') = break (== '"') rest
               param = Param { param_name = name, param_value = val }
           in (param, rest')
       (name,_:rest) | not (null name) ->
@@ -133,42 +133,6 @@ parseType :: String -> Type
 parseType xs = case break (== '.') xs of
                  (a, []) -> Type { type_group = Nothing, type_name = a }
                  (a, _:b)  -> Type { type_group = Just a, type_name = b }
-
--- The 'decode' and 'dec' functions are adapted from Ian Lynagh's mime-string
--- package.
-
--- decode is very forgiving, and makes some best guesses
-decode :: [String] -> String
-decode = dec . concat . intersperse "\n"
-       . removeSoftLinebreaks
-       . map (dropFromEndWhile is_tab_space)
-    where is_tab_space ' ' = True
-          is_tab_space '\t' = True
-          is_tab_space _ = False
-          breakLast "" = ("", "")
-          breakLast [x] = ("", [x])
-          breakLast (x:xs) = case breakLast xs of
-                                 (ys, zs) -> (x:ys, zs)
-          removeSoftLinebreaks [] = []
-          removeSoftLinebreaks (x:xs)
-              = case breakLast x of
-                    (x', "=") ->
-                        case removeSoftLinebreaks xs of
-                            [] -> [x']
-                            (y:ys) -> (x' ++ y):ys
-                    _ -> x:removeSoftLinebreaks xs
-          dropFromEndWhile :: (a -> Bool) -> [a] -> [a]
-          dropFromEndWhile p =
-              foldr (\x xs -> if null xs && p x then [] else x:xs) []
-
-dec :: String -> String
-dec ('=':c1:c2:cs)
-    | isAsciiHexDigit c1 && isAsciiHexDigit c2 =
-        chr ((digitToInt c1 `shiftL` 4)  + digitToInt c2):dec cs
-    where isAsciiHexDigit :: Char -> Bool
-          isAsciiHexDigit c = isAscii c && isHexDigit c
-dec (c:cs) = c:dec cs
-dec "" = ""
 
 -- A few canned parsers for value types defined in rfc2425
 
