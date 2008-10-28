@@ -5,7 +5,7 @@ module Codec.MIME.ContentType.Text.Directory
     , nakedType, (@@)
     , parseDirectory
     , pa_URI, pa_text, pa_date, pa_dateTime, pa_integer, pa_bool, pa_float, pa_textList
-    , many, single) where
+    , many) where
 
 import Data.Time
 import System.Locale
@@ -151,42 +151,42 @@ pa_parameterList = do
 
 -- A few canned parsers for value types defined in rfc2425
 
-pa_URI :: B.ByteString -> Value u
-pa_URI = Text
+pa_URI :: ValueParser u
+pa_URI _ = (:[]) . Text
 
 -- | Unescape slashes, newlines and commas.
-pa_text :: B.ByteString -> Value u
-pa_text = Text . head . pa_textList
+pa_text :: ValueParser u
+pa_text tps = take 1 . pa_textList tps
 
-pa_date :: B.ByteString -> Value u
-pa_date =
-    Date . readTime defaultTimeLocale (iso8601DateFormat Nothing) . B.unpack
+pa_date :: ValueParser u
+pa_date _ =
+    (:[]) . Date . readTime defaultTimeLocale (iso8601DateFormat Nothing) . B.unpack
 
-pa_time :: B.ByteString -> Value u
-pa_time = Time . utctDayTime . readTime defaultTimeLocale "%T" . B.unpack
+pa_time :: ValueParser u
+pa_time _ =
+    (:[]) . Time . utctDayTime . readTime defaultTimeLocale "%T" . B.unpack
 
-pa_dateTime :: B.ByteString -> Value u
-pa_dateTime =
-    DateTime .
+pa_dateTime :: ValueParser u
+pa_dateTime _ =
+    (:[]) . DateTime .
     readTime defaultTimeLocale (iso8601DateFormat (Just "T%T")) .
     B.unpack
 
-pa_integer :: B.ByteString -> Value u
-pa_integer = Integer . fst . fromJust . B.readInteger
+pa_integer :: ValueParser u
+pa_integer _ = (:[]) . Integer . fst . fromJust . B.readInteger
 
-pa_bool :: B.ByteString -> Value u
-pa_bool "TRUE" = Boolean True
-pa_bool "FALSE" = Boolean False
+pa_bool :: ValueParser u
+pa_bool _ "TRUE" = [Boolean True]
+pa_bool _ "FALSE" = [Boolean False]
 
-pa_float :: B.ByteString -> Value u
-pa_float = Float . read . B.unpack
+pa_float :: ValueParser u
+pa_float _ = (:[]) . Float . read . B.unpack
 
-pa_textList :: B.ByteString -> [B.ByteString]
-pa_textList "" = []
-pa_textList xs = B.foldr f [B.empty] xs
-    where f :: Char -> [B.ByteString] -> [B.ByteString]
-          f ','  (xs:xss) = B.empty:xs:xss
-          f '\\' ("":xs:xss) = (B.cons ',' xs):xss
+pa_textList :: ValueParser u
+pa_textList _ "" = []
+pa_textList _ xs = map (Text . B.pack . B.unpack) $ B.foldr f [B.empty] xs
+    where f ','  (xs:xss) = B.empty : xs : xss
+          f '\\' ("":xs:xss) = B.cons ',' xs : xss
           f '\\' (xs:xss) | Just ('n',_)  <- B.uncons xs = B.cons '\n' xs : xss
           f '\\' (xs:xss) | Just ('N',_)  <- B.uncons xs = B.cons '\n' xs : xss
           f '\\' (xs:xss) | Just ('\\',_) <- B.uncons xs = B.cons '\\' xs : xss
@@ -195,13 +195,8 @@ pa_textList xs = B.foldr f [B.empty] xs
 -- | Take a parser for single values to a parser for a list of values. This
 -- assumes that the separator between values is the "," character, and that
 -- values do not contain commas themselves.
-many :: (B.ByteString -> Value u) -> B.ByteString -> [Value u]
-many pa input = map pa $ breakAll input
+many :: ValueParser u -> ValueParser u
+many pa tps input = map (head . pa tps) $ breakAll input
     where breakAll "" = []
           breakAll xs = ys : breakAll (B.drop 1 zs)
               where (ys, zs) = B.span (/= ',') xs
-
--- | Convenience function to turn makes a parser for a single value return a
--- singleton list.
-single :: (B.ByteString -> Value u) -> B.ByteString -> [Value u]
-single pa = (:[]) . pa
