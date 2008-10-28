@@ -1,6 +1,7 @@
 module Codec.MIME.ContentType.Text.Directory
     ( Directory, Property(..), Type(..), Parameter(..), Value(..)
     , Rfc2425Types
+    , ValueParser
     , nakedType, (@@)
     , parseDirectory
     , pa_URI, pa_text, pa_date, pa_dateTime, pa_integer, pa_bool, pa_float, pa_textList
@@ -64,12 +65,16 @@ data Value u = URI URI
              | IANAValue u -- an IANA defined type not part of rfc2425
                deriving (Eq, Show)
 
--- | Instantiate Value with this phantom type to indicate that
--- property types should be none other than those defined in rfc2425.
+-- | Instantiate Value with this phantom type to indicate that property types
+-- should be none other than those defined in rfc2425.
 data Rfc2425Types
 
--- | Break the input into logical lines, unfolding lines that span
--- multiple physical lines.
+-- | The type of parsers for property values, for instance to read an integer
+-- property, text property, etc.
+type ValueParser u = (Type, [Parameter]) -> B.ByteString -> [Value u]
+
+-- | Break the input into logical lines, unfolding lines that span multiple
+-- physical lines.
 unfoldLines :: B.ByteString -> [B.ByteString]
 unfoldLines "" = []
 unfoldLines s =
@@ -108,7 +113,7 @@ capture pat = P $ \s -> unsafePerformIO $ do
                            Just (_, _, s', captures) -> (captures, s')
                            Nothing -> error "Parse error."
 
-parseDirectory :: (Type -> [Parameter] -> B.ByteString -> [Value u])
+parseDirectory :: ValueParser u
                -- ^ Given a Property Type and a list of parameters,
                -- parse a string representation into a Value.
                -> B.ByteString
@@ -119,7 +124,7 @@ parseDirectory valparse = concatMap (fst . unP (pa_property valparse)) . unfoldL
 -- return type here is actually a list of properties, because we
 -- desugar properties whose values are lists into a list of
 -- properties, one for each element of the value list.
-pa_property :: (Type -> [Parameter] -> B.ByteString -> [Value u])
+pa_property :: ValueParser u
               -- ^ Given a Property Type and a list of parameters,
               -- parse a string representation into a (list of) Value.
               -> P [Property u]
@@ -134,7 +139,7 @@ pa_property valparse = do
       prop v = Prop { prop_type = typ
                     , prop_parameters = params
                     , prop_value = v }
-  return $ map prop $ valparse typ params rest
+  return $ map prop $ valparse (typ, params) rest
 
 pa_parameterList :: P [Parameter]
 pa_parameterList = do
