@@ -194,7 +194,8 @@ pa_textList xs = B.foldr f [B.empty] xs
           f x (xs:xss) = B.cons x xs : xss
 
 -- | Take a parser for single values to a parser for a list of values. This
--- assumes that the separator between values is the "," character.
+-- assumes that the separator between values is the "," character, and that
+-- values do not contain commas themselves.
 many :: (B.ByteString -> Value u) -> B.ByteString -> [Value u]
 many pa input = map pa $ breakAll input
     where breakAll "" = []
