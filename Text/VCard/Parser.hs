@@ -7,7 +7,7 @@ import qualified Data.Map as Map
 import qualified Data.ByteString.Lazy.Char8 as B
 
 
-type SourceName = B.ByteString
+type SourceName = String
 
 parseVCards :: SourceName -> B.ByteString -> [VCard]
 parseVCards file input =
