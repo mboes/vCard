@@ -1,3 +1,6 @@
 module Text.VCard.PrettyPrint where
 
-ppVCard = undefined
+import Text.VCard
+
+ppVCard :: VCard -> String
+ppVCard = show

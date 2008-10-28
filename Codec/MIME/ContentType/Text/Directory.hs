@@ -69,6 +69,9 @@ data Value u = URI URI
 -- should be none other than those defined in rfc2425.
 data Rfc2425Types
 
+instance Show Rfc2425Types where
+    show _ = undefined
+
 -- | The type of parsers for property values, for instance to read an integer
 -- property, text property, etc.
 type ValueParser u = (Type, [Parameter]) -> B.ByteString -> [Value u]

@@ -11,7 +11,7 @@ type SourceName = String
 
 parseVCards :: SourceName -> B.ByteString -> [VCard]
 parseVCards file input =
-    map parseVCard $ groupByCard $ D.parseDirectory (\x y -> [D.Text y]) input
+    map parseVCard $ groupByCard $ D.parseDirectory D.pa_text input
 
 groupByCard :: [Attribute] -> [[Attribute]]
 groupByCard [] = []
@@ -21,11 +21,11 @@ groupByCard xs = tail $ foldr f [[]] xs
           f p (ps:pss) = (p:ps):pss
 
 parseVersion :: B.ByteString -> Version
-parseVersion s = undefined
+parseVersion s = Version 0 0
 
 parseVCard :: [Attribute] -> VCard
 parseVCard =
-    foldr f VCard{ vcard_version = undefined, vcard_attributes = undefined }
+    foldr f VCard{ vcard_version = undefined, vcard_attributes = Map.empty }
     where f p vcard | p D.@@ "begin" = vcard -- administrative
                     | p D.@@ "end" = vcard   -- junk.
                     | p D.@@ "version" =

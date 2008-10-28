@@ -16,5 +16,5 @@ main = do
         [] -> return ("<stdin>", stdin)
         _ -> printUsage
   input <- B.hGetContents handle
-  mapM_ ppVCard $ parseVCards filename input
+  mapM_ (putStrLn . ppVCard) $ parseVCards filename input
 
