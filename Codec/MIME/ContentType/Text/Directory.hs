@@ -77,17 +77,16 @@ type ValueParser u = (Type, [Parameter]) -> B.ByteString -> [Value u]
 -- physical lines.
 unfoldLines :: B.ByteString -> [B.ByteString]
 unfoldLines "" = []
-unfoldLines s =
-    let (l, s') = B.break (== '\o15') s
-        join = case unfoldLines (B.drop 3 s') of
-              [] -> [l]
-              cont:rest -> (B.append l cont) : rest
-    in case B.unpack s' of
-         [] -> [l]
-         '\r':'\n':' ':_ -> join
-         '\r':'\n':'\t':_ -> join
-         '\r':'\n':_ -> l : unfoldLines (B.drop 2 s')
-         _ -> error "Malformed input: no LF after a CR."
+unfoldLines s = B.foldr f [B.empty] s
+    where f '\r' (xs:xss) | Just (h1, xs') <- B.uncons xs,
+                            Just (h2, xs'') <- B.uncons xs' =
+                            case (h1, h2) of
+                                ('\n', ' ') -> xs'':xss
+                                ('\n', '\t') -> xs'':xss
+                                ('\n', _) -> "":xs':xss
+                                _ -> error "Malformed input: no LF after a CR."
+                          | otherwise = "":xss
+          f x (xs:xss) = B.cons x xs : xss
 
 newtype P a = P { unP :: B.ByteString -> (a, B.ByteString) }
 
