@@ -1,7 +1,10 @@
 module Codec.MIME.ContentType.Text.Directory
     ( Directory, Property(..), Type(..), Parameter(..), Value(..)
     , Rfc2425Types
-    , nakedType, (@@)) where
+    , nakedType, (@@)
+    , parseDirectory
+    , pa_URI, pa_text, pa_date, pa_dateTime, pa_integer, pa_bool, pa_float, pa_textList
+    , many, single) where
 
 import Data.Time
 import System.Locale
