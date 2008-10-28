@@ -21,7 +21,11 @@ groupByCard xs = tail $ foldr f [[]] xs
           f p (ps:pss) = (p:ps):pss
 
 parseVersion :: B.ByteString -> Version
-parseVersion s = Version 0 0
+parseVersion s = let (majt, mint) = B.break (=='.') s
+                     maj = maybe err fst (B.readInt majt)
+                     min = maybe err fst (B.readInt (B.drop 1 mint))
+                 in Version maj min
+    where err = error "Not a valid version number."
 
 parseVCard :: [Attribute] -> VCard
 parseVCard =
