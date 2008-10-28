@@ -4,11 +4,12 @@ module Text.VCard.Parser
 import Text.VCard
 import qualified Codec.MIME.ContentType.Text.Directory as D
 import qualified Data.Map as Map
+import qualified Data.ByteString.Lazy.Char8 as B
 
 
-type SourceName = String
+type SourceName = B.ByteString
 
-parseVCards :: SourceName -> String -> [VCard]
+parseVCards :: SourceName -> B.ByteString -> [VCard]
 parseVCards file input =
     map parseVCard $ groupByCard $ D.parseDirectory (\x y -> [D.Text y]) input
 
@@ -19,7 +20,7 @@ groupByCard xs = tail $ foldr f [[]] xs
                            [] : (p:ps) : pss
           f p (ps:pss) = (p:ps):pss
 
-parseVersion :: String -> Version
+parseVersion :: B.ByteString -> Version
 parseVersion s = undefined
 
 parseVCard :: [Attribute] -> VCard
