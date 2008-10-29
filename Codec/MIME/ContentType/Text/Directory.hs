@@ -104,7 +104,7 @@ p pat = P $ \s -> unsafePerformIO $ do
           Right result <- regexec r s
           return $ case result of
                      Just (_, match, s', _) -> (match, s')
-                     Nothing -> error "Parse error."
+                     Nothing -> error $ "Parse error: " ++ show (B.unpack s)
 
 capture :: B.ByteString     -- ^ Text of the regular expression containing capturing groups.
         -> P [B.ByteString] -- ^ The captured subparts of the input.
@@ -113,7 +113,7 @@ capture pat = P $ \s -> unsafePerformIO $ do
                 Right result <- regexec r s
                 return $ case result of
                            Just (_, _, s', captures) -> (captures, s')
-                           Nothing -> error "Parse error."
+                           Nothing -> error $ "Parse error: " ++ show (B.unpack s)
 
 parseDirectory :: ValueParser u
                -- ^ Given a Property Type and a list of parameters,
