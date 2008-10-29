@@ -1,8 +1,7 @@
 module Main where
 
 import qualified Data.ByteString.Lazy as B
-import Text.VCard.Parser
-import Text.VCard.PrettyPrint
+import Text.VCard.Format.Directory
 import System.IO
 import System
 
@@ -16,5 +15,5 @@ main = do
         [] -> return ("<stdin>", stdin)
         _ -> printUsage
   input <- B.hGetContents handle
-  mapM_ (putStrLn . ppVCard) $ parseVCards filename input
+  mapM_ (\v -> B.putStr (writeVCard v) >> B.putStr "\r\n") $ readVCards filename input
 
