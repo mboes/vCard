@@ -5,7 +5,9 @@ module Codec.MIME.ContentType.Text.Directory
     , nakedType, (@@)
     , parseDirectory
     , pa_URI, pa_text, pa_date, pa_dateTime, pa_integer, pa_bool, pa_float, pa_textList
-    , many) where
+    , many
+    , printDirectory
+    , printProperty) where
 
 import Data.Time
 import System.Locale
@@ -204,3 +206,47 @@ many pa tps input = map (head . pa tps) $ breakAll input
     where breakAll "" = []
           breakAll xs = ys : breakAll (B.drop 1 zs)
               where (ys, zs) = B.span (/= ',') xs
+
+-- Printing
+
+showBS :: Show a => a -> B.ByteString
+showBS = B.pack . show
+
+-- Pretty printing of values
+class PrintValue a where
+    printValue :: a -> B.ByteString
+
+instance PrintValue u => PrintValue (Value u) where
+    printValue (URI v) = showBS v
+    printValue (Text v) = v
+    printValue (Date v) = showBS v
+    printValue (Time v) = showBS v
+    printValue (DateTime v) = showBS v
+    printValue (Integer v) = showBS v
+    printValue (Boolean True) = "TRUE"
+    printValue (Boolean False) = "FALSE"
+    printValue (Float v) = showBS v
+    printValue (IANAValue v) = printValue v
+
+instance PrintValue Rfc2425Types where
+    printValue _ = error "No other types in RFC 2425."
+
+printDirectory :: PrintValue u => [Property u] -> B.ByteString
+printDirectory props = B.intercalate "\r\n" $ map printProperty props
+
+printProperty :: PrintValue u => Property u -> B.ByteString
+printProperty prop =
+    if null (prop_parameters prop)
+    then B.concat [ printType (prop_type prop), ":"
+                  , printValue (prop_value prop) ]
+    else B.concat [ printType (prop_type prop), ";"
+                  , B.concat $ map printParameter $ prop_parameters prop, ":"
+                  , printValue (prop_value prop) ]
+
+printType :: Type -> B.ByteString
+printType typ = case type_group typ of
+                  Just group -> B.concat [group, ".", type_name typ]
+                  Nothing -> type_name typ
+
+printParameter :: Parameter -> B.ByteString
+printParameter param = B.concat [param_name param, "=", param_value param]
