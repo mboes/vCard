@@ -42,18 +42,13 @@ showBS = B.pack . show
 
 writeVCard :: VCard -> B.ByteString
 writeVCard (VCard ver attrs) =
-    B.intercalate "\r\n"
-         [ "BEGIN:VCARD"
-         , B.intercalate "\r\n" $
-           concatMap (map writeAttribute . snd) (version_attr : Map.toList attrs)
-         , "END:VCARD" ]
-    where version_attr =
-              (undefined, [D.Prop { D.prop_type = D.Type Nothing "VERSION"
-                                  , D.prop_parameters = []
-                                  , D.prop_value = val }])
-          val = D.Text $ B.concat [ showBS $ version_major ver, "."
-                                  , showBS $ version_minor ver ]
-
+    B.intercalate "\r\n" $
+    concatMap (map writeAttribute . snd) $ [begin, version] ++ Map.toList attrs ++ [end]
+    where attr typ val = (undefined, [D.Prop (D.nakedType typ) [] val])
+          begin = attr "BEGIN" (D.Text "VCARD")
+          end = attr "END" (D.Text "VCARD")
+          version = attr "VERSION" $ D.Text $ B.concat [ showBS $ version_major ver, "."
+                                                       , showBS $ version_minor ver ]
 
 writeAttribute :: Attribute -> B.ByteString
 writeAttribute prop =

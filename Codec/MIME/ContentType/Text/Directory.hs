@@ -37,6 +37,7 @@ instance Eq Type where
 nakedType :: B.ByteString -> Type
 nakedType name = Type { type_group = Nothing, type_name = name }
 
+-- | Check whether the given property is an instance of the given type.
 (@@) :: Property u -> B.ByteString -> Bool
 p @@ name = prop_type p == nakedType name
 
