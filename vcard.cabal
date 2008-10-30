@@ -1,5 +1,7 @@
 name:           vcard
 version:        0.1
+author:		Mathieu Boespflug
+maintainer:	Mathieu Boespflug <mboes@tweag.net>
 homepage:       http://code.haskell.org/~mboes/vcard.git
 synopsis:       A library for parsing/printing vCards from/to various formats.
 description:
