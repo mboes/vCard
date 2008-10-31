@@ -4,11 +4,13 @@ import qualified Data.Map as Map
 import qualified Codec.MIME.ContentType.Text.Directory as D
 
 data Version = Version
-    {  version_major :: Int
+    { version_major :: Int
     , version_minor :: Int }
                deriving Show
 
-type Attribute = D.Property D.Rfc2425Types
+type VCardValue = D.Rfc2425Value
+type Attribute = D.Property VCardValue
+type SourceName = String
 
 data VCard = VCard
     { vcard_version :: Version
