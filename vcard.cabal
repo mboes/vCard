@@ -5,7 +5,7 @@ maintainer:	Mathieu Boespflug <mboes@tweag.net>
 homepage:       http://code.haskell.org/~mboes/vcard.git
 synopsis:       A library for parsing/printing vCards from/to various formats.
 description:
-        A library for parsing/printing vCards from/to various formats.
+        A library for parsing\/printing vCards from\/to various formats.
         Currently only vCard 3.0 defined in RFC 2426 is supported.
 category:       Text
 license:        LGPL
