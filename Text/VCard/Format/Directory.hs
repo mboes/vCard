@@ -51,7 +51,7 @@ fromAttributes =
                     | p D.@@ "version" =
                         let D.Text ver = D.prop_value p
                         in vcard { vcard_version = parseVersion ver }
-                    | otherwise = vcardMerge p vcard
+                    | otherwise = insert p vcard
 
 fields :: B.ByteString -> [B.ByteString]
 fields "" = []
