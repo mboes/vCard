@@ -7,10 +7,12 @@ import qualified Codec.Binary.Base64.String as Base64
 import qualified Data.Map as Map
 import qualified Data.ByteString.Lazy.Char8 as B
 import Text.Printf
+import Data.List (intercalate)
 
 
 instance D.PrintValue ExtraValue where
-    printValue (Sequence xs) = D.escape ",;" $ B.intercalate ";" xs
+    printValue (Sequence xs) =
+        D.escape ",;" $ B.intercalate "," $ intercalate [";"] xs
     printValue (Binary blob) = B.pack $ Base64.encode $ B.unpack blob
     printValue (PhoneNumber num) = num
     printValue (UTCOffset sign hrs mins) =
@@ -62,7 +64,9 @@ fields s = B.foldr f [B.empty] s
 -- | A variant of RFC 2425 text type where all ';' characters are escaped
 -- except those that serve as field delimiters.
 pa_sequence :: D.ValueParser ExtraValue
-pa_sequence _ = return . D.IANAValue . Sequence . fields
+pa_sequence tps =
+    return . D.IANAValue . Sequence . map (map untxt . D.pa_text tps) . fields
+    where untxt (D.Text s) = s
 
 pa_binary :: D.ValueParser ExtraValue
 pa_binary _ = return . D.IANAValue . Binary . B.pack . Base64.decode . B.unpack
