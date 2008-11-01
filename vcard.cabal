@@ -21,9 +21,3 @@ library
                      mime-directory >= 0.1, base64-string
     exposed-modules: Text.VCard
                      Text.VCard.Format.Directory
-
-executable vcard
-    extensions:      OverloadedStrings, PatternGuards
-    build-depends: base >= 3, containers, bytestring >= 0.9,
-                   mime-directory >= 0.1
-    main-is: t/Main.hs
