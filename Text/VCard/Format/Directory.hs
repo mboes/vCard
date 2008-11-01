@@ -3,9 +3,19 @@ module Text.VCard.Format.Directory
 
 import Text.VCard
 import qualified Codec.MIME.ContentType.Text.Directory as D
+import qualified Codec.Binary.Base64.String as Base64
 import qualified Data.Map as Map
 import qualified Data.ByteString.Lazy.Char8 as B
+import Text.Printf
 
+
+instance D.PrintValue ExtraValue where
+    printValue (Sequence xs) = D.escape ",;" $ B.intercalate ";" xs
+    printValue (Binary blob) = B.pack $ Base64.encode $ B.unpack blob
+    printValue (PhoneNumber num) = num
+    printValue (UTCOffset sign hrs mins) =
+        B.pack $ printf "%c%02d:%02d" sign hrs mins
+    printValue (SubVCard vc) = D.escape ",;:" $ writeVCard vc
 
 showBS :: Show a => a -> B.ByteString
 showBS = B.pack . show
@@ -40,3 +50,19 @@ fromAttributes =
                         let D.Text ver = D.prop_value p
                         in vcard { vcard_version = parseVersion ver }
                     | otherwise = vcardMerge p vcard
+
+fields :: B.ByteString -> [B.ByteString]
+fields "" = []
+fields s = B.foldr f [B.empty] s
+    where f ';'  (xs:xss) = B.empty : xs : xss
+          f '\\' ("":xs:xss) = B.cons ';' xs : xss
+          f '\\' (xs:xss) | Just ('\\',_) <- B.uncons xs = B.cons '\\' xs : xss
+          f x (xs:xss) = B.cons x xs : xss
+
+-- | A variant of RFC 2425 text type where all ';' characters are escaped
+-- except those that serve as field delimiters.
+pa_sequence :: D.ValueParser ExtraValue
+pa_sequence _ = return . D.IANAValue . Sequence . fields
+
+pa_binary :: D.ValueParser ExtraValue
+pa_binary _ = return . D.IANAValue . Binary . B.pack . Base64.decode . B.unpack
