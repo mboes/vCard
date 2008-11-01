@@ -1,7 +1,7 @@
 name:           vcard
 version:        0.1
-author:		Mathieu Boespflug
-maintainer:	Mathieu Boespflug <mboes@tweag.net>
+author:         Mathieu Boespflug
+maintainer:     Mathieu Boespflug <mboes@tweag.net>
 homepage:       http://code.haskell.org/~mboes/vcard.git
 synopsis:       A library for parsing/printing vCards from/to various formats.
 description:
@@ -9,14 +9,21 @@ description:
         Currently only vCard 3.0 defined in RFC 2426 is supported.
 category:       Text
 license:        LGPL
-license-file:	LICENSE
+license-file:   LICENSE
 copyright:      (c) 2008. Mathieu Boespflug <mboes@tweag.net>
 cabal-version:  >= 1.2.0
 build-type:     Simple
 tested-with:    GHC ==6.10
 
 library
-        extensions:      OverloadedStrings
-        build-depends:   base >= 3, containers, bytestring >= 0.9, mime-directory >= 0.1
-        exposed-modules: Text.VCard
-                         Text.VCard.Format.Directory
+    extensions:      OverloadedStrings, PatternGuards
+    build-depends:   base >= 3, containers, bytestring >= 0.9,
+                     mime-directory >= 0.1, base64-string
+    exposed-modules: Text.VCard
+                     Text.VCard.Format.Directory
+
+executable vcard
+    extensions:      OverloadedStrings, PatternGuards
+    build-depends: base >= 3, containers, bytestring >= 0.9,
+                   mime-directory >= 0.1
+    main-is: t/Main.hs

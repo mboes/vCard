@@ -3,9 +3,10 @@ module Main where
 import qualified Data.ByteString.Lazy as B
 import Text.VCard.Format.Directory
 import System.IO
-import System
+import System.Environment
+import System.Exit
 
-printUsage = putStrLn "vcard2ldif [FILE]" >> exitFailure
+printUsage = putStrLn "vcard2vcard [FILE]" >> exitFailure
 
 main = do
   args <- getArgs
