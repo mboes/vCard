@@ -24,7 +24,7 @@ showBS = B.pack . show
 
 writeVCard :: VCard -> B.ByteString
 writeVCard (VCard ver attrs) =
-    D.printDirectory $ [begin, version] ++ concat (Map.elems attrs) ++ [end]
+    D.printDirectory' $ [begin, version] ++ concat (Map.elems attrs) ++ [end]
     where attr typ val = D.Prop (D.nakedType typ) [] val
           begin   = D.Prop (D.nakedType "BEGIN") [] (D.Text "VCARD")
           end     = D.Prop (D.nakedType "END") [] (D.Text "VCARD")
