@@ -13,24 +13,24 @@ seqi name prop n | D.IANAValue (V.Sequence seq) <- D.prop_value prop,
                            error $ "Expecting " ++ B.unpack name ++ " property."
                  | otherwise = error "Wrong value."
 
-n_familyName        prop = seqi "n" prop 0
-n_givenName         prop = seqi "n" prop 1
-n_additionalNames   prop = seqi "n" prop 2
-n_honorificPrefixes prop = seqi "n" prop 3
-n_honorificSuffixes prop = seqi "n" prop 4
+n_familyName        prop = seqi "N" prop 0
+n_givenName         prop = seqi "N" prop 1
+n_additionalNames   prop = seqi "N" prop 2
+n_honorificPrefixes prop = seqi "N" prop 3
+n_honorificSuffixes prop = seqi "N" prop 4
 
-adr_pobox          prop = seqi "adr" prop 0
-adr_extendedAdress prop = seqi "adr" prop 1
-adr_streetAdress   prop = seqi "adr" prop 2
-adr_locality       prop = seqi "adr" prop 3
-adr_region         prop = seqi "adr" prop 4
-adr_postalCode     prop = seqi "adr" prop 5
-adr_country        prop = seqi "adr" prop 6
+adr_pobox          prop = seqi "ADR" prop 0
+adr_extendedAdress prop = seqi "ADR" prop 1
+adr_streetAdress   prop = seqi "ADR" prop 2
+adr_locality       prop = seqi "ADR" prop 3
+adr_region         prop = seqi "ADR" prop 4
+adr_postalCode     prop = seqi "ADR" prop 5
+adr_country        prop = seqi "ADR" prop 6
 
-geo_latitude  prop = seqi "geo" prop 0
-geo_longitude prop = seqi "geo" prop 1
+geo_latitude  prop = seqi "GEO" prop 0
+geo_longitude prop = seqi "GEO" prop 1
 
-org_organizationName  prop = seqi "org" prop 0
+org_organizationName  prop = seqi "ORG" prop 0
 org_organizationUnits prop
     | D.IANAValue (V.Sequence (_:seq)) <- D.prop_value prop = seq
     | otherwise = error "Wrong value."
