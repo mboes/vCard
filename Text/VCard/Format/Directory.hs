@@ -61,9 +61,9 @@ fields s = B.foldr f [B.empty] s
           f x (xs:xss) = B.cons x xs : xss
 
 vCardValueParser :: D.ValueParser ExtraValue
-vCardValueParser tps@(typ,params)
+vCardValueParser tps@(_,params)
     | Just [valspec] <- D.lookupParameter "value" params = parserFromSpec valspec tps
-    | otherwise = defaultValueParser typ tps
+    | otherwise = defaultValueParser tps
 
 type ValueSpec = B.ByteString
 
@@ -82,22 +82,22 @@ parserFromSpec "vcard" = pa_subVCard
 
 -- | Maps property types to the corresponding default value parser, in the
 -- absence of any VALUE parameter.
-defaultValueParser :: D.Type -> D.ValueParser ExtraValue
-defaultValueParser typ
-    | typ == D.nakedType "photo" = pa_binary
-    | typ == D.nakedType "bday" = D.pa_date
-    | typ == D.nakedType "adr" = pa_sequence
-    | typ == D.nakedType "tel" = pa_phoneNumber
-    | typ == D.nakedType "tz" = pa_utcOffset
-    | typ == D.nakedType "geo" = pa_sequence
-    | typ == D.nakedType "logo" = pa_binary
-    | typ == D.nakedType "agent" = pa_subVCard
-    | typ == D.nakedType "org" = pa_sequence
-    | typ == D.nakedType "rev" = D.pa_dateTime
-    | typ == D.nakedType "sound" = pa_binary
-    | typ == D.nakedType "url" = D.pa_URI
-    | typ == D.nakedType "key" = pa_binary
-    | otherwise = D.pa_text
+defaultValueParser :: D.ValueParser ExtraValue
+defaultValueParser tps@(typ,_)
+    | typ == D.nakedType "photo" = pa_binary tps
+    | typ == D.nakedType "bday" = D.pa_date tps
+    | typ == D.nakedType "adr" = pa_struct tps
+    | typ == D.nakedType "tel" = pa_phoneNumber tps
+    | typ == D.nakedType "tz" = pa_utcOffset tps
+    | typ == D.nakedType "geo" = pa_struct tps
+    | typ == D.nakedType "logo" = pa_binary tps
+    | typ == D.nakedType "agent" = pa_subVCard tps
+    | typ == D.nakedType "org" = pa_struct tps
+    | typ == D.nakedType "rev" = D.pa_dateTime tps
+    | typ == D.nakedType "sound" = pa_binary tps
+    | typ == D.nakedType "url" = D.pa_URI tps
+    | typ == D.nakedType "key" = pa_binary tps
+    | otherwise = D.pa_text tps
 
 -- Parsers for vCard specific value specifications.
 
