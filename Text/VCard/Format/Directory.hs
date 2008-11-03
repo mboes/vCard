@@ -1,5 +1,5 @@
 module Text.VCard.Format.Directory
-    ( readVCards, fromAttributes, writeVCard ) where
+    ( module Text.VCard, readVCards, fromAttributes, writeVCard ) where
 
 import Text.VCard
 import qualified Codec.MIME.ContentType.Text.Directory as D

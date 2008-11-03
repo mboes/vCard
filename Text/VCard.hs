@@ -1,7 +1,6 @@
 module Text.VCard
     ( module Text.VCard.Types
-    , module Text.VCard.Fields ) where
+    , module Text.VCard.Selectors ) where
 
 import Text.VCard.Types
-import Text.VCard.Fields
-import qualified Data.ByteString.Lazy.Char8 as B
+import Text.VCard.Selectors
