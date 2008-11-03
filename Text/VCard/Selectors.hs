@@ -1,4 +1,4 @@
--- | Field selectors for sequence values, such as in N or ADR attributes.
+-- | Field selectors for struct values, such as in N or ADR attributes.
 module Text.VCard.Fields where
 
 import qualified Text.VCard.Types as V
@@ -6,7 +6,7 @@ import qualified Codec.MIME.ContentType.Text.Directory as D
 import qualified Data.ByteString.Lazy.Char8 as B
 
 
-seqi name prop n | D.IANAValue (V.Sequence seq) <- D.prop_value prop,
+seqi name prop n | D.IANAValue (V.Struct seq) <- D.prop_value prop,
                    length seq > n =
                        if D.prop_type prop == D.nakedType name
                        then seq !! n else
@@ -32,5 +32,5 @@ geo_longitude prop = seqi "GEO" prop 1
 
 org_organizationName  prop = seqi "ORG" prop 0
 org_organizationUnits prop
-    | D.IANAValue (V.Sequence (_:seq)) <- D.prop_value prop = seq
+    | D.IANAValue (V.Struct (_:seq)) <- D.prop_value prop = seq
     | otherwise = error "Wrong value."

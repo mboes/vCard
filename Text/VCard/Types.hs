@@ -10,7 +10,7 @@ data Version = Version
     , version_minor :: Int }
                deriving Show
 
-data ExtraValue = Sequence [[B.ByteString]]
+data ExtraValue = Struct [[B.ByteString]]
                 | Binary B.ByteString
                 | PhoneNumber B.ByteString
                 | UTCOffset { utcOffset_sign :: Char

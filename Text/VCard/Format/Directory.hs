@@ -10,7 +10,7 @@ import Data.List (intercalate)
 
 
 instance D.PrintValue ExtraValue where
-    printValue (Sequence xs) =
+    printValue (Struct xs) =
         D.escape ",;" $ B.intercalate "," $ intercalate [";"] xs
     printValue (Binary blob) = blob
     printValue (PhoneNumber num) = num
@@ -103,9 +103,9 @@ defaultValueParser tps@(typ,_)
 
 -- | A variant of RFC 2425 text type where all ';' characters are escaped
 -- except those that serve as field delimiters.
-pa_sequence :: D.ValueParser ExtraValue
-pa_sequence tps =
-    return . D.IANAValue . Sequence . map (map untxt . D.pa_text tps) . fields
+pa_struct :: D.ValueParser ExtraValue
+pa_struct tps =
+    return . D.IANAValue . Struct . map (map untxt . D.pa_text tps) . fields
     where untxt (D.Text s) = s
 
 pa_binary :: D.ValueParser ExtraValue
