@@ -1,4 +1,6 @@
-module Text.VCard.Types where
+module Text.VCard.Types
+    ( Version(..), ExtraValue(..), VCard(..)
+    , VCardValue, Attribute, SourceName ) where
 
 import qualified Data.Map as Map
 import qualified Codec.MIME.ContentType.Text.Directory as D
