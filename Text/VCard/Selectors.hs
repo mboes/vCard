@@ -1,5 +1,5 @@
 -- | Field selectors for struct values, such as in N or ADR attributes.
-module Text.VCard.Fields where
+module Text.VCard.Selectors where
 
 import qualified Text.VCard.Types as V
 import qualified Codec.MIME.ContentType.Text.Directory as D
