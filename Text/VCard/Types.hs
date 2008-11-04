@@ -3,6 +3,7 @@ module Text.VCard.Types where
 import qualified Data.Map as Map
 import qualified Codec.MIME.ContentType.Text.Directory as D
 import qualified Data.ByteString.Lazy.Char8 as B
+import qualified Data.ByteString.Lazy.Char8.Folded as I
 
 
 data Version = Version
@@ -28,5 +29,5 @@ type SourceName = String
 
 data VCard = VCard
     { vcard_version :: Version
-    , vcard_attributes :: Map.Map B.ByteString [Attribute] }
+    , vcard_attributes :: Map.Map I.ByteString [Attribute] }
              deriving Show

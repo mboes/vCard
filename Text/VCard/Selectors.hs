@@ -3,14 +3,14 @@ module Text.VCard.Selectors where
 
 import qualified Text.VCard.Types as V
 import qualified Codec.MIME.ContentType.Text.Directory as D
-import qualified Data.ByteString.Lazy.Char8 as B
+import qualified Data.ByteString.Lazy.Char8.Folded as I
 
 
 seqi name prop n | D.IANAValue (V.Struct seq) <- D.prop_value prop,
                    length seq > n =
                        if D.prop_type prop == D.nakedType name
                        then seq !! n else
-                           error $ "Expecting " ++ B.unpack name ++ " property."
+                           error $ "Expecting " ++ I.unpack name ++ " property."
                  | otherwise = error "Wrong value."
 
 n_familyName        prop = seqi "N" prop 0
