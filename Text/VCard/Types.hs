@@ -30,12 +30,3 @@ data VCard = VCard
     { vcard_version :: Version
     , vcard_attributes :: Map.Map B.ByteString [Attribute] }
              deriving Show
-
-lookup :: B.ByteString -> VCard -> Maybe [VCardValue]
-lookup typ vcard =
-    fmap (map D.prop_value) $ Map.lookup typ (vcard_attributes vcard)
-
-insert :: Attribute -> VCard -> VCard
-insert p vcard@(VCard {vcard_attributes = attrs}) =
-    vcard{ vcard_attributes = Map.insertWith merge (D.type_name (D.prop_type p)) [p] attrs }
-    where merge [p] ps = p:ps

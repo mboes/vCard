@@ -2,6 +2,7 @@ module Text.VCard.Format.Directory
     ( module Text.VCard, readVCards, fromAttributes, writeVCard ) where
 
 import Text.VCard
+import qualified Text.VCard.Query as Q
 import qualified Codec.MIME.ContentType.Text.Directory as D
 import qualified Data.Map as Map
 import qualified Data.ByteString.Lazy.Char8 as B
@@ -50,7 +51,7 @@ fromAttributes =
                     | p D.@@ "version" =
                         let D.Text ver = D.prop_value p
                         in vcard { vcard_version = parseVersion ver }
-                    | otherwise = insert p vcard
+                    | otherwise = Q.insert p vcard
 
 fields :: B.ByteString -> [B.ByteString]
 fields "" = []
