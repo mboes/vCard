@@ -1,7 +1,7 @@
 import Text.VCard.Format.Directory
 
 import qualified Data.ByteString.Lazy.Char8 as B
-import qualified Data.ByteString.Lazy.Char8.Folded as I
+import qualified Data.ByteString.Lazy.Char8.Caseless as I
 import Text.VCard.Format.Directory
 import qualified Text.VCard.Query as Q
 import Text.Regex.PCRE.ByteString.Lazy

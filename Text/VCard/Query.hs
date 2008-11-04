@@ -4,7 +4,7 @@ import Text.VCard.Types
 import qualified Codec.MIME.ContentType.Text.Directory as D
 import qualified Data.Map as Map
 import Data.Maybe (fromJust)
-import qualified Data.ByteString.Lazy.Char8.Folded as I
+import qualified Data.ByteString.Lazy.Char8.Caseless as I
 
 
 lookup :: I.ByteString -> VCard -> Maybe [VCardValue]

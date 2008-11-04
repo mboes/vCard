@@ -3,7 +3,7 @@ module Text.VCard.Selectors where
 
 import qualified Text.VCard.Types as V
 import qualified Codec.MIME.ContentType.Text.Directory as D
-import qualified Data.ByteString.Lazy.Char8.Folded as I
+import qualified Data.ByteString.Lazy.Char8.Caseless as I
 
 
 seqi name prop n | D.IANAValue (V.Struct seq) <- D.prop_value prop,

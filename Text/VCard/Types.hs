@@ -5,7 +5,7 @@ module Text.VCard.Types
 import qualified Data.Map as Map
 import qualified Codec.MIME.ContentType.Text.Directory as D
 import qualified Data.ByteString.Lazy.Char8 as B
-import qualified Data.ByteString.Lazy.Char8.Folded as I
+import qualified Data.ByteString.Lazy.Char8.Caseless as I
 
 
 data Version = Version
