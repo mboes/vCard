@@ -1,5 +1,5 @@
 module Text.VCard.Format.Directory
-    ( module Text.VCard, readVCards, fromAttributes, writeVCard ) where
+    ( module Text.VCard, readVCards, fromProperties, writeVCard ) where
 
 import Text.VCard
 import qualified Text.VCard.Query as Q
@@ -34,7 +34,7 @@ writeVCard (VCard ver attrs) =
 
 readVCards :: SourceName -> B.ByteString -> [VCard]
 readVCards file =
-    map fromAttributes . D.groupByBeginEnd . D.parseDirectory' vCardValueParser
+    map fromProperties . D.groupByBeginEnd . D.parseDirectory' vCardValueParser
 
 parseVersion :: B.ByteString -> Version
 parseVersion s = let (majt, mint) = B.break (=='.') s
@@ -43,9 +43,9 @@ parseVersion s = let (majt, mint) = B.break (=='.') s
                  in Version maj min
     where err = error "Not a valid version number."
 
-fromAttributes :: [Attribute] -> VCard
-fromAttributes =
-    foldr f VCard{ vcard_version = undefined, vcard_attributes = Map.empty }
+fromProperties :: [VProperty] -> VCard
+fromProperties =
+    foldr f VCard{ vcard_version = undefined, vcard_properties = Map.empty }
     where f p vcard | p D.@@ "begin" = vcard -- administrative
                     | p D.@@ "end" = vcard   -- junk.
                     | p D.@@ "version" =

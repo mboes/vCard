@@ -1,6 +1,6 @@
 module Text.VCard.Types
     ( Version(..), ExtraValue(..), VCard(..)
-    , VCardValue, Attribute, SourceName ) where
+    , VCardValue, VProperty, SourceName ) where
 
 import qualified Data.Map as Map
 import qualified Codec.MIME.ContentType.Text.Directory as D
@@ -26,10 +26,10 @@ data ExtraValue = Struct [[B.ByteString]]
                   deriving Show
 
 type VCardValue = D.Value ExtraValue
-type Attribute = D.Property ExtraValue
+type VProperty = D.Property ExtraValue
 type SourceName = String
 
 data VCard = VCard
     { vcard_version :: Version
-    , vcard_attributes :: Map.Map I.ByteString [Attribute] }
+    , vcard_properties :: Map.Map I.ByteString [VProperty] }
              deriving Show

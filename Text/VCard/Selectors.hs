@@ -1,4 +1,4 @@
--- | Field selectors for struct values, such as in N or ADR attributes.
+-- | Field selectors for struct values, such as in N or ADR properties.
 module Text.VCard.Selectors where
 
 import qualified Text.VCard.Types as V
