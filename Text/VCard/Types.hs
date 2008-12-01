@@ -20,6 +20,7 @@ data Version = Version
     , version_minor :: Int }
                deriving Show
 
+-- | Additional value specifications in RFC 2426.
 data ExtraValue = Struct [[B.ByteString]]
                 | Binary B.ByteString
                 | PhoneNumber B.ByteString
@@ -32,6 +33,8 @@ data ExtraValue = Struct [[B.ByteString]]
                 | SubVCard VCard
                   deriving Show
 
+-- | A |VCardValue| obeys the union of the value specifications in RFC 2425
+-- and RFC 2426.
 type VCardValue = D.Value ExtraValue
 type VProperty = D.Property ExtraValue
 type SourceName = String

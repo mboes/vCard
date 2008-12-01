@@ -9,10 +9,11 @@
 -- additionto the mime-directory library, with the exception of
 -- |Text.VCard.Query|, since that library should be imported qualified, as
 -- many of the names clash with standard |Prelude| names.
-module Text.VCard
-    ( module D
-    , module Text.VCard.Types
-    , module Text.VCard.Selectors ) where
+--
+-- To use this library, you probably want to import one of the modules in
+-- |Text.VCard.Format| only, to parse and serialize vcards in specific formats.
+module Text.VCard ( module D , module Text.VCard.Types , module
+Text.VCard.Selectors ) where
 
 import Codec.MIME.ContentType.Text.Directory as D
 import Text.VCard.Types

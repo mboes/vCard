@@ -1,5 +1,5 @@
 name:           vcard
-version:        0.1
+version:        0.1.2
 author:         Mathieu Boespflug
 maintainer:     Mathieu Boespflug <mboes@tweag.net>
 homepage:       http://code.haskell.org/~mboes/vcard.git
@@ -20,4 +20,7 @@ library
     build-depends:   base >= 3, containers, bytestring >= 0.9,
                      mime-directory >= 0.1
     exposed-modules: Text.VCard
+                     Text.VCard.Types
+                     Text.VCard.Query
+                     Text.VCard.Selectors
                      Text.VCard.Format.Directory

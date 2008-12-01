@@ -4,7 +4,9 @@
 -- Maintainer  : mboes@tweag.net
 -- Stability   : experimental
 -- Portability : non-portable
-
+--
+-- Implements the vCard format defined in RFC 2426, based on the
+-- text/directory MIME type defined in RFC 2425.
 module Text.VCard.Format.Directory
     ( module Text.VCard, readVCards, fromProperties, writeVCard ) where
 
