@@ -35,7 +35,7 @@ main = do
   let re = case result of Left (_, err) -> error err
                           Right re -> re
       cards = readVCards filename dirstr
-      matches = Q.filterWithAttribute query cards
+      matches = Q.filterWithProperty query cards
       query prop | prop @@ "fn", Text name <- prop_value prop,
                    re =~ name = True
                  | otherwise = False
