@@ -13,7 +13,7 @@ license-file:   LICENSE
 copyright:      (c) 2008. Mathieu Boespflug <mboes@tweag.net>
 cabal-version:  >= 1.6.0
 build-type:     Simple
-tested-with:    GHC ==6.10
+tested-with:    GHC ==6.10, GHC ==6.12, GHC ==7
 
 library
     extensions:      OverloadedStrings, PatternGuards
