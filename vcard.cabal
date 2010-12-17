@@ -1,7 +1,7 @@
 name:           vcard
 version:        0.1.4
 author:         Mathieu Boespflug
-maintainer:     Mathieu Boespflug <mboes@tweag.net>
+maintainer:     Mathieu Boespflug <mboes - at - tweag.net>
 homepage:       http://github.com/mboes/vCard
 synopsis:       A library for parsing/printing vCards from/to various formats.
 description:
@@ -10,7 +10,7 @@ description:
 category:       Text
 license:        LGPL
 license-file:   LICENSE
-copyright:      (c) 2008. Mathieu Boespflug <mboes@tweag.net>
+copyright:      (c) 2008. Mathieu Boespflug <mboes - at - tweag.net>
 cabal-version:  >= 1.6.0
 build-type:     Simple
 tested-with:    GHC ==6.10, GHC ==6.12, GHC ==7
